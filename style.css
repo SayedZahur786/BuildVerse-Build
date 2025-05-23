@@ -1,0 +1,182 @@
+/* Modern Dark Theme for Streamlit */
+html, body, .stApp {
+    background-color: #0F172A !important; /* Deep blue-gray dark background */
+    color: #E2E8F0 !important;
+}
+
+section[data-testid="stSidebar"] {
+    background-color: #1E293B !important; /* Slightly lighter than main background */
+    padding: 15px;  
+    border-right: 2px solid #334155; 
+}
+
+/* Improve sidebar text visibility */
+section[data-testid="stSidebar"] .stMarkdown, 
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] span,
+section[data-testid="stSidebar"] label,
+section[data-testid="stSidebar"] div {
+    color: #F1F5F9 !important; /* Bright text for better visibility */
+}
+
+header[data-testid="stHeader"] {
+    background-color: #1E293B !important;
+    padding: 10px 0 !important;  
+    border-bottom: 1px solid #334155;
+}
+
+/* Buttons with vibrant purple accent */
+.stButton>button {
+    background-color: #8B5CF6 !important; /* Vibrant purple */
+    color: white !important;
+    border-radius: 8px !important;  
+    padding: 6px 18px !important;  
+    font-size: 14px !important;  
+    border: none !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(139, 92, 246, 0.3);
+}
+
+.stButton>button:hover {
+    background-color: #A78BFA !important; /* Lighter purple on hover */
+    box-shadow: 0 4px 8px rgba(139, 92, 246, 0.4);
+    transform: translateY(-1px);
+}
+
+/* Input fields with teal accent */
+.stTextInput>div>div>input, .stTextArea>div>div>textarea {
+    border: 1px solid #2DD4BF !important; /* Teal border */
+    border-radius: 6px !important;
+    padding: 8px !important;
+    background-color: #0F172A !important; /* Matching main background */
+    color: #F1F5F9 !important;
+}
+
+.stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus {
+    border: 2px solid #5EEAD4 !important; /* Brighter teal on focus */
+    box-shadow: 0 0 0 1px rgba(94, 234, 212, 0.3);
+}
+
+/* Selectbox styling with consistent colors */
+.stSelectbox>div>div {
+    background-color: #0F172A !important;
+    border: 1px solid #2DD4BF !important;
+    color: #F1F5F9 !important;
+}
+
+/* Slider adjustments */
+.stSlider>div>div>div {
+    color: #2DD4BF !important; /* Teal slider */
+}
+
+/* Checkbox styling */
+.stCheckbox>label>div[role="checkbox"] {
+    border-color: #8B5CF6 !important; /* Purple to match buttons */
+}
+
+.stCheckbox>label>div[data-baseweb="checkbox"] div[data-checked="true"] {
+    background-color: #8B5CF6 !important;
+}
+
+/* Dataframe/table styling */
+[data-testid="stTable"] {
+    background-color: #1E293B !important;
+    border-radius: 8px !important;
+    overflow: hidden;
+    border: 1px solid #334155 !important;
+}
+
+[data-testid="stTable"] th {
+    background-color: #334155 !important;
+    color: #F1F5F9 !important;
+}
+
+[data-testid="stTable"] td {
+    background-color: #1E293B !important;
+    color: #E2E8F0 !important;
+    border-bottom: 1px solid #334155 !important;
+}
+
+/* Card-like containers for content */
+.stExpander, div[data-testid="stBlock"] {
+    background-color: #1E293B !important; 
+    border-radius: 12px !important;
+    padding: 16px !important;
+    margin: 12px 0 !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Footer styling */
+.footer {
+    text-align: center;
+    font-size: 14px;
+    color: #94A3B8;
+    margin-top: 30px;  
+    padding: 15px;
+    border-top: 1px solid #334155;
+}
+
+/* Tooltip customization */
+.stTooltipIcon > span {
+    color: #2DD4BF !important; /* Teal to match inputs */
+}
+
+/* Progress bar */
+.stProgress > div > div > div {
+    background-color: #8B5CF6 !important; /* Purple to match buttons */
+}
+
+/* Tabs styling */
+button[role="tab"] {
+    background-color: #1E293B !important;
+    color: #E2E8F0 !important;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+button[role="tab"][aria-selected="true"] {
+    background-color: #334155 !important;
+    color: #F1F5F9 !important;
+    border-bottom: 2px solid #8B5CF6 !important; /* Purple accent */
+    font-weight: 600;
+}
+
+/* Code blocks matching theme */
+.stCodeBlock {
+    background-color: #1E293B !important;
+    border: 1px solid #334155 !important;
+    border-radius: 8px !important;
+}
+
+/* Improve all text visibility throughout the app */
+.stMarkdown, p, span, h1, h2, h3, h4, h5, h6 {
+    color: #F1F5F9 !important;
+}
+
+/* Additional styling for metrics */
+[data-testid="stMetricValue"] {
+    color: #F8FAFC !important; 
+    font-weight: 600 !important;
+}
+
+/* Accent colors for important elements */
+[data-testid="stMetricValue"]::before {
+    background-color: #8B5CF6 !important;
+}
+
+/* Hover effects for interactive elements */
+.stSelectbox:hover, .stMultiSelect:hover, .stTextInput:hover, .stTextArea:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+}
+
+/* Add subtle gradient accents to sidebar */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%) !important;
+}
+
+/* Ensure uniform text color for selectbox options */
+.stSelectbox div[role="listbox"] div {
+    background-color: #1E293B !important;
+    color: #F1F5F9 !important;
+}
