@@ -25,7 +25,7 @@ local_css()
 st.title("CareCanvas - AI-Powered Skin Analysis App")
 
 sidebar = st.sidebar
-sidebar.image(get_path("logo.jpg"), width=100)  # fixed
+sidebar.image(get_path("logo.jpg"), width=300)  # fixed
 
 sidebar.markdown("----")
 
