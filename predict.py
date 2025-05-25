@@ -1,28 +1,8 @@
-import torch
-import torchvision.transforms as transforms
-from PIL import Image
-import numpy as np
-from model import SkinCNN
 import os
+from ultralytics import YOLO
+from PIL import Image
 
-num_classes = 30
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-model = SkinCNN(num_classes).to(device)
-
-# Get the absolute path to the current directory (predict.py's location)
-current_dir = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.join(current_dir, "skin_model.pth")
-
-model.load_state_dict(torch.load(model_path, map_location=device))
-model.eval()
-
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
-])
-
+# Define label names (update these if your model's labels are different)
 label_names = ["Acne", "Pimples", "Bacterial Breakouts", "Blackheads", "Clogged Pores",
                "Oily Skin", "Open Pores", "Fine Lines", "Wrinkles", "Uneven Texture",
                "Dull Skin", "Hyperpigmentation", "Uneven Skin Tone", "Dark Spots", "PIH",
@@ -30,27 +10,54 @@ label_names = ["Acne", "Pimples", "Bacterial Breakouts", "Blackheads", "Clogged 
                "Sensitive Skin", "Dry Skin", "Dehydration", "Eczema", "Barrier Repair",
                "Puffiness", "Dark Circles", "Sunburn", "Sun Damage"]
 
-def predict(image_path, threshold=0.08, top_k=3):  
-    image = Image.open(image_path).convert("RGB")
-    image = transform(image).unsqueeze(0).to(device)
+def save_temp_img(results):
+    import random
+    save_path = "temp_images/temp_" + str(random.randint(1000, 9999)) + ".jpg"
 
-    with torch.no_grad():
-        outputs = model(image)
-        predictions = torch.sigmoid(outputs).cpu().numpy().flatten()
+    # Get annotated image as NumPy array
+    result_array = results.plot()  # BGR format
 
-    detected = [(label, score) for label, score in zip(label_names, predictions) if score > threshold]
+    # Convert BGR to RGB and save as PIL image
+    result_image = Image.fromarray(result_array[..., ::-1])
+    
+    # Ensure the save directory exists
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    
+    # Save the image
+    result_image.save(save_path)
+
+    return save_path
+
+# Load YOLO model
+current_dir = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(current_dir, "epoch20pt.pt")
+model = YOLO(model_path)
+
+def predict(image_path, conf_threshold=0.25, top_k=3):
+    results = model(image_path, conf=conf_threshold)[0]
+    save_path = save_temp_img(results)
+
+    detected = []
+    for box in results.boxes:
+        cls = int(box.cls[0].item())
+        conf = float(box.conf[0].item())
+        label = label_names[cls] if cls < len(label_names) else f"Class_{cls}"
+        detected.append((label, conf))
+
+    # Sort and get top_k
     top_labels = sorted(detected, key=lambda x: x[1], reverse=True)[:top_k]
     top_concerns = [label for label, _ in top_labels]
-    return top_concerns
+    top_concerns = list(set(top_concerns))  # Remove duplicates
+    return top_concerns, save_path
 
-# Optional: Only runs for standalone testing
+# Optional: for testing
 if __name__ == "__main__":
     test_image_path = os.path.join(current_dir, "images", "1.jpg")
     if os.path.exists(test_image_path):
         predicted_labels = predict(test_image_path)
         print("\nTop Skin Concerns:")
         if predicted_labels:
-            print(", ".join(predicted_labels))
+            print(", ".join(list(set(predicted_labels))))
         else:
             print("No significant skin concerns detected.")
     else:

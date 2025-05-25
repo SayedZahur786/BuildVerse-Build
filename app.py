@@ -120,8 +120,11 @@ elif sidebar_option == "AI Skin Analysis":
 
         st.image(image_path, caption="Uploaded Image", use_container_width=True)
 
-        predictions = predict(image_path)
+        predictions, save_path = predict(image_path)
         top_concerns = predictions[:3]  
+
+        st.subheader("Detected Skin Issues:")
+        st.image(Image.open(save_path), caption="AI Analysis Result", use_column_width=True)
 
         st.subheader("Predicted Skin Concerns:")
         st.write(", ".join(top_concerns) if top_concerns else "No concerns detected.")
