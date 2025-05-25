@@ -17,15 +17,17 @@ def get_path(filename):
 
 def local_css():
     css_path = get_path("style.css")
-    with open(css_path) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    if os.path.exists(css_path):
+        with open(css_path) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 local_css()
 
 st.title("CareCanvas - AI-Powered Skin Analysis App")
 
 sidebar = st.sidebar
-sidebar.image(get_path("logo.jpg"), width=300)  # fixed
+if os.path.exists(get_path("logo.jpg")):
+    sidebar.image(get_path("logo.jpg"), width=300)  # fixed
 
 sidebar.markdown("----")
 
@@ -74,8 +76,6 @@ if sidebar_option == "Home":
     st.markdown("---")
     st.success("✨ Start your journey to better skin with CareCanvas today!")
 
-    # st.image(get_path("home.jpg"), use_container_width=True)  # fixed
-
 elif sidebar_option == "Skin Type Assesment":
     st.subheader("Find Your Skin Type")
     st.write("Take the **Skin Analysis Quiz** to receive personalized skincare recommendations.")
@@ -103,7 +103,7 @@ elif sidebar_option == "Skin Type Assesment":
 
     def determine_skin_type(answers):
         skin_types = {'Dry': 0, 'Normal': 0, 'Oily': 0, 'Combination': 0, 'Sensitive': 0, 'Acne-Prone': 0}
-        
+
         for answer in answers:
             if answer == 'A': skin_types['Dry'] += 1
             elif answer == 'B': skin_types['Normal'] += 1
@@ -147,7 +147,7 @@ elif sidebar_option == "AI Skin Analysis":
     uploaded_file = st.file_uploader("Upload an image of your face", type=["jpg", "jpeg", "png"])
 
     if uploaded_file is not None:
-        image_path = get_path("temp_image.jpg")  # fixed
+        image_path = get_path("temp_image.jpg")
         with open(image_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
@@ -155,7 +155,6 @@ elif sidebar_option == "AI Skin Analysis":
 
         predictions, save_path = predict(image_path)
         top_concerns = predictions[:3]  
-        
 
         st.subheader("Predicted Skin Concerns:")
         st.write(", ".join(top_concerns) if top_concerns else "No concerns detected.")
@@ -180,7 +179,6 @@ elif sidebar_option == "AI Skin Analysis":
         else:
             st.warning("No matching ingredients found. Try refining your concerns!")
 
-        # Cleanup temp image
         os.remove(image_path)
 
 elif sidebar_option == "Ingredient Checker":
@@ -222,7 +220,6 @@ elif sidebar_option == "Personalized Skincare Solution":
 
         for ingredient, details in ingredient_database.items():
             matches_skin_type = user_skin_type in details["suitable_for"]
-
             ingredient_concerns = [c.lower() for c in details["concerns"]]
             matches_any_concern = any(concern in ingredient_concerns for concern in concerns)
 
