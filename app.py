@@ -37,11 +37,44 @@ sidebar_option = sidebar.radio(
 )
 
 if sidebar_option == "Home":
-    st.write("""
-        SkinSage is an AI-powered skin analysis app that helps you determine your skin type
-        and provides personalized skincare recommendations.
+    st.title("🌿 Welcome to CareCanvas")
+
+    st.markdown("""
+    CareCanvas is your personal skincare companion, designed to help you understand your skin better and find the best products for your unique needs.
     """)
-    st.image(get_path("home.jpg"), use_container_width=True)  # fixed
+
+    st.markdown("---")
+
+    st.header("✨ Features")
+
+    st.subheader("📸 Facial Analysis")
+    st.markdown("""
+    Upload a selfie and get instant, detailed analysis of your skin concerns such as acne, dryness, spots, and more.  
+    🔍 Detect multiple issues at once  
+    📊 Receive severity scores  
+    🧴 Get personalized skincare recommendations tailored to your unique skin.
+    """)
+
+    st.subheader("🧪 Ingredient Checker")
+    st.markdown("""
+    Scan or enter skincare ingredients to instantly discover whether they’re suitable for your skin type and concerns.  
+    🔍 Learn the function of each ingredient  
+    ⚠️ Identify potentially harmful substances  
+    ✅ Explore safer alternatives for healthier skincare.
+    """)
+
+    st.subheader("🕒 Routine Generator")
+    st.markdown("""
+    Receive a personalized morning and evening skincare routine designed specifically for your skin type, concerns, and goals.  
+    🧼 Step-by-step guidance  
+    🛍️ Customized product recommendations  
+    🔄 Easily adjust your routine as your skin evolves.
+    """)
+
+    st.markdown("---")
+    st.success("✨ Start your journey to better skin with CareCanvas today!")
+
+    # st.image(get_path("home.jpg"), use_container_width=True)  # fixed
 
 elif sidebar_option == "Skin Type Assesment":
     st.subheader("Find Your Skin Type")
@@ -122,9 +155,7 @@ elif sidebar_option == "AI Skin Analysis":
 
         predictions, save_path = predict(image_path)
         top_concerns = predictions[:3]  
-
-        st.subheader("Detected Skin Issues:")
-        st.image(Image.open(save_path), caption="AI Analysis Result", use_column_width=True)
+        
 
         st.subheader("Predicted Skin Concerns:")
         st.write(", ".join(top_concerns) if top_concerns else "No concerns detected.")
