@@ -147,7 +147,7 @@ elif sidebar_option == "AI Skin Analysis":
     uploaded_file = st.file_uploader("Upload an image of your face", type=["jpg", "jpeg", "png"])
 
     if uploaded_file is not None:
-        image_path = get_path("temp_image.jpg")
+        image_path = get_path("temp_image.jpg")  # fixed
         with open(image_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
@@ -155,6 +155,9 @@ elif sidebar_option == "AI Skin Analysis":
 
         predictions, save_path = predict(image_path)
         top_concerns = predictions[:3]  
+
+        st.subheader("Detected Skin Issues:")
+        st.image(Image.open(save_path), caption="AI Analysis Result", use_column_width=True)
 
         st.subheader("Predicted Skin Concerns:")
         st.write(", ".join(top_concerns) if top_concerns else "No concerns detected.")
@@ -179,6 +182,7 @@ elif sidebar_option == "AI Skin Analysis":
         else:
             st.warning("No matching ingredients found. Try refining your concerns!")
 
+        # Cleanup temp image
         os.remove(image_path)
 
 elif sidebar_option == "Ingredient Checker":
