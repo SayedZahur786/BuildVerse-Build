@@ -1,0 +1,27 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Streamlit cache
+.streamlit/secrets.toml
+
+# Temporary files
+temp_images/
+temp_image.jpg
+
+# Model files (already committed, but for future)
+# *.pt
+# *.pth
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Virtual environment
+venv/
+env/
