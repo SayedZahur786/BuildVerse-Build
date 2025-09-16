@@ -18,16 +18,25 @@ def get_path(filename):
 def local_css():
     css_path = get_path("style.css")
     if os.path.exists(css_path):
-        with open(css_path) as f:
-            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+        try:
+            with open(css_path) as f:
+                st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+        except Exception as e:
+            # Silently ignore CSS loading errors
+            pass
 
 local_css()
 
 st.title("CareCanvas - AI-Powered Skin Analysis App")
 
 sidebar = st.sidebar
-if os.path.exists(get_path("logo.jpg")):
-    sidebar.image(get_path("logo.jpg"), width=300)  # fixed
+logo_path = get_path("logo.jpg")
+if os.path.exists(logo_path):
+    try:
+        sidebar.image(logo_path, width=300)
+    except Exception as e:
+        # Show a text header if logo fails to load
+        sidebar.markdown("### CareCanvas")
 
 sidebar.markdown("----")
 
@@ -147,43 +156,65 @@ elif sidebar_option == "AI Skin Analysis":
     uploaded_file = st.file_uploader("Upload an image of your face", type=["jpg", "jpeg", "png"])
 
     if uploaded_file is not None:
-        image_path = get_path("temp_image.jpg")  # fixed
+        # Create a unique temp image path
+        import time
+        temp_filename = f"temp_image_{int(time.time())}.jpg"
+        image_path = get_path(temp_filename)
+        
         with open(image_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
         st.image(image_path, caption="Uploaded Image", use_container_width=True)
 
-        predictions, save_path = predict(image_path)
-        top_concerns = predictions[:3]  
+        try:
+            predictions, save_path = predict(image_path)
+            
+            if save_path and os.path.exists(save_path):
+                top_concerns = predictions[:3]  
 
-        st.subheader("Detected Skin Issues:")
-        st.image(Image.open(save_path), caption="AI Analysis Result", use_column_width=True)
+                st.subheader("Detected Skin Issues:")
+                st.image(Image.open(save_path), caption="AI Analysis Result", use_container_width=True)
 
-        st.subheader("Predicted Skin Concerns:")
-        st.write(", ".join(top_concerns) if top_concerns else "No concerns detected.")
+                st.subheader("Predicted Skin Concerns:")
+                st.write(", ".join(top_concerns) if top_concerns else "No concerns detected.")
 
-        recommended_ingredients = []
-        for ingredient, details in ingredient_database.items():
-            concern_match = any(concern.lower() in [c.lower() for c in details["concerns"]] for concern in top_concerns)
-            if concern_match:
-                recommended_ingredients.append([
-                    ingredient,
-                    details["category"],
-                    ", ".join(details["suitable_for"]),
-                    details["benefits"],
-                    details["usage"]
-                ])
+                recommended_ingredients = []
+                for ingredient, details in ingredient_database.items():
+                    concern_match = any(concern.lower() in [c.lower() for c in details["concerns"]] for concern in top_concerns)
+                    if concern_match:
+                        recommended_ingredients.append([
+                            ingredient,
+                            details["category"],
+                            ", ".join(details["suitable_for"]),
+                            details["benefits"],
+                            details["usage"]
+                        ])
 
-        if recommended_ingredients:
-            df = pd.DataFrame(recommended_ingredients, 
-                              columns=["Ingredient", "Category", "Suitable For", "Benefits", "Usage"])
-            st.subheader("Recommended Skincare Ingredients:")
-            st.dataframe(df, use_container_width=True)
-        else:
-            st.warning("No matching ingredients found. Try refining your concerns!")
-
-        # Cleanup temp image
-        os.remove(image_path)
+                if recommended_ingredients:
+                    df = pd.DataFrame(recommended_ingredients, 
+                                      columns=["Ingredient", "Category", "Suitable For", "Benefits", "Usage"])
+                    st.subheader("Recommended Skincare Ingredients:")
+                    st.dataframe(df, use_container_width=True)
+                else:
+                    st.warning("No matching ingredients found. Try refining your concerns!")
+                
+                # Cleanup temp analysis image
+                try:
+                    if save_path and os.path.exists(save_path):
+                        os.remove(save_path)
+                except:
+                    pass  # Ignore cleanup errors
+            else:
+                st.error("Sorry, we couldn't analyze your image. Please try again with a different image.")
+        except Exception as e:
+            st.error(f"An error occurred during analysis: {str(e)}")
+            
+        # Cleanup temp uploaded image
+        try:
+            if os.path.exists(image_path):
+                os.remove(image_path)
+        except:
+            pass  # Ignore cleanup errors
 
 elif sidebar_option == "Ingredient Checker":
     st.subheader("Check Your Skincare Ingredients")
